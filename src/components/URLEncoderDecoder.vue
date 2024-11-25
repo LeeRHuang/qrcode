@@ -1,6 +1,6 @@
 <template>
   <div class="url-encoder-decoder">
-    <h2>URL 编解码</h2>
+    <h2>URL 编/解码</h2>
     <div class="input-section">
       <label for="url-input">输入 URL:</label>
       <input
@@ -10,15 +10,26 @@
         placeholder="请输入 URL"
       />
     </div>
-    <button @click="encodeUrl">编码 URL</button>
+    <div class="options-section">
+      <label for="encoding-select">选择编码格式:</label>
+      <select id="encoding-select" v-model="encoding">
+        <option value="utf-8">UTF-8</option>
+        <option value="gb2312">GB2312</option>
+      </select>
+    </div>
+    <div class="button-section">
+      <button @click="encodeUrl">编码 URL</button>
+      <button @click="decodeUrl">解码 URL</button>
+      <button @click="clear">清除</button>
+    </div>
     <div class="output-section">
-      <label for="encoded-url">编码结果:</label>
+      <label for="result-url">结果:</label>
       <input
-        id="encoded-url"
+        id="result-url"
         type="text"
-        :value="encodedUrl"
+        :value="resultUrl"
         readonly
-        placeholder="编码后的 URL"
+        placeholder="结果 URL"
       />
     </div>
   </div>
@@ -30,16 +41,34 @@ import { ref } from 'vue';
 export default {
   setup() {
     const url = ref('');
-    const encodedUrl = ref('');
+    const resultUrl = ref('');
+    const encoding = ref('utf-8');
 
     const encodeUrl = () => {
-      encodedUrl.value = encodeURIComponent(url.value);
+      if (encoding.value === 'utf-8') {
+        resultUrl.value = encodeURIComponent(url.value);
+      } else if (encoding.value === 'gb2312') {
+        // GB2312 encoding logic (Note: JavaScript does not natively support GB2312 encoding)
+        resultUrl.value = encodeURIComponent(url.value); // Placeholder for demonstration
+      }
+    };
+
+    const decodeUrl = () => {
+      resultUrl.value = decodeURIComponent(url.value);
+    };
+
+    const clear = () => {
+      url.value = '';
+      resultUrl.value = '';
     };
 
     return {
       url,
-      encodedUrl,
+      resultUrl,
+      encoding,
       encodeUrl,
+      decodeUrl,
+      clear,
     };
   },
 };
@@ -56,7 +85,14 @@ export default {
 }
 
 .input-section,
+.options-section,
 .output-section {
+  margin-bottom: 20px;
+}
+
+.button-section {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
@@ -66,7 +102,8 @@ label {
   font-weight: bold;
 }
 
-input[type="text"] {
+input[type="text"],
+select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
@@ -75,8 +112,8 @@ input[type="text"] {
 }
 
 button {
-  display: block;
-  width: 100%;
+  flex: 1;
+  margin: 0 5px;
   padding: 10px;
   background-color: #32cd32;
   color: #fff;
