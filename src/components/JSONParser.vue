@@ -1,25 +1,33 @@
 <template>
   <div class="json-parser">
-    <h2>JSON 解析</h2>
+    <header class="header">
+      <h1>JSON 解析器</h1>
+      <p>输入 JSON 字符串并查看格式化结果</p>
+    </header>
     <div class="json-container">
-      <textarea
-        v-model="jsonInput"
-        placeholder="输入 JSON 字符串"
-        @input="formatJson"
-      ></textarea>
-      <div class="json-output">
-        <vue-json-pretty
-          :data="parsedJson"
-          :deep="1"
-          :showLineNumber="false"
-          :expandIcon="expandIcon"
-          :collapseIcon="collapseIcon"
-          :keyStyle="keyStyle"
-          :valueStyle="valueStyle"
-        />
+      <div class="input-section">
+        <textarea
+          v-model="jsonInput"
+          placeholder="输入 JSON 字符串"
+          @input="formatJson"
+        ></textarea>
+        <div v-if="error" class="error">{{ error }}</div>
+      </div>
+      <div class="output-section">
+        <div class="json-output">
+          <vue-json-pretty
+            v-if="parsedJson"
+            :data="parsedJson"
+            :deep="1"
+            :showLineNumber="false"
+            :expandIcon="expandIcon"
+            :collapseIcon="collapseIcon"
+            :keyStyle="keyStyle"
+            :valueStyle="valueStyle"
+          />
+        </div>
       </div>
     </div>
-    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
@@ -36,14 +44,19 @@ export default {
       jsonInput: '',
       parsedJson: null,
       error: '',
-      expandIcon: '<span style="color: skyblue;">+</span>',
-      collapseIcon: '<span style="color: lightcoral;">-</span>',
+      expandIcon: '<span style="color: lightcoral;">+</span>', // Collapsed state
+      collapseIcon: '<span style="color: teal;">-</span>', // Expanded state
       keyStyle: 'color: darkviolet;',
       valueStyle: 'color: green;'
     };
   },
   methods: {
     formatJson() {
+      if (!this.jsonInput.trim()) {
+        this.parsedJson = null;
+        this.error = '';
+        return;
+      }
       try {
         this.error = '';
         this.parsedJson = JSON.parse(this.jsonInput);
@@ -61,6 +74,15 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .json-container {
@@ -69,19 +91,29 @@ export default {
   max-width: 800px;
 }
 
-textarea {
+.input-section,
+.output-section {
   width: 50%;
-  height: 400px;
-  margin-right: 20px;
   padding: 10px;
   box-sizing: border-box;
 }
 
+textarea {
+  width: 100%;
+  height: 400px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #e8f0fe;
+}
+
 .json-output {
-  width: 50%;
   height: 400px;
   overflow-y: auto;
   border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #ffffff;
   padding: 10px;
   box-sizing: border-box;
 }
