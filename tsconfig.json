@@ -1,10 +1,5 @@
 {
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
   "compilerOptions": {
-    "composite": true,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -14,7 +9,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "allowJs": true
+    "allowJs": true,
+    "declaration": true, // Ensure this is set if you need declaration files
+    "declarationMap": true // Optional, for source maps of declarations
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "exclude": ["node_modules"]
